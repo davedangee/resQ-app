@@ -10,6 +10,7 @@ docker-compose.yml
 
 # ===== BACKEND =====
 resq_backend/src/main/resources/secrets.yaml
+**/secrets.yaml
 resq_backend/target/
 resq_backend/HELP.md
 resq_backend/.apt_generated
