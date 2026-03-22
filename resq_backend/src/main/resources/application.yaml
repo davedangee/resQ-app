@@ -1,11 +1,13 @@
 spring:
+  datasource:
+      url: ${secrets.db.url}
+      username: ${secrets.db.user}
+      password: ${secrets.db.password}
+  config:
+    import: optional:classpath:secrets.yaml
+
   application:
     name: resQ-backend
-
-  datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
 
   jpa:
     hibernate:

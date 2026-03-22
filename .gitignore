@@ -23,6 +23,7 @@ resq_backend/build/
 !resq_backend/**/src/test/**/target/
 !resq_backend/**/src/main/**/build/
 !resq_backend/**/src/test/**/build/
+resq_backend/src/main/resources/secrets.yaml
 
 # ===== FRONTEND =====
 resq_frontend/node_modules/
