@@ -3,9 +3,9 @@ services:
     image: postgres:16
     container_name: resq_postgres
     environment:
-      POSTGRES_DB: resq_db
-      POSTGRES_USER: resq_user
-      POSTGRES_PASSWORD: resq_lukieierbär
+      POSTGRES_DB: ${DB_URL}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
