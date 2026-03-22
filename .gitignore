@@ -9,6 +9,7 @@ docker-compose.yml
 **/.env.production
 
 # ===== BACKEND =====
+resq_backend/src/main/resources/secrets.yaml
 resq_backend/target/
 resq_backend/HELP.md
 resq_backend/.apt_generated
@@ -23,7 +24,6 @@ resq_backend/build/
 !resq_backend/**/src/test/**/target/
 !resq_backend/**/src/main/**/build/
 !resq_backend/**/src/test/**/build/
-resq_backend/src/main/resources/secrets.yaml
 
 # ===== FRONTEND =====
 resq_frontend/node_modules/
