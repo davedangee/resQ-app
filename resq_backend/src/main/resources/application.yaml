@@ -1,3 +1,29 @@
 spring:
   application:
-    name: resq_backend
+    name: resQ-backend
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Europe/Vienna
+
+server:
+  port: 8080
+
+logging:
+  level:
+    com.resq: DEBUG
+    org.hibernate.SQL: DEBUG
