@@ -3,6 +3,7 @@
 **/application-local.yaml
 **/application-prod.yml
 **/application-prod.yaml
+docker-compose.yml
 **/.env
 **/.env.local
 **/.env.production
