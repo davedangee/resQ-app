@@ -5,7 +5,7 @@ services:
     environment:
       POSTGRES_DB: resq_db
       POSTGRES_USER: resq_user
-      POSTGRES_PASSWORD: resq_password
+      POSTGRES_PASSWORD: resq_lukieierbär
     ports:
       - "5432:5432"
     volumes:
