@@ -1,7 +1,7 @@
 package at.resq.resq_backend.accidentPatient;
 
 
-import at.resq.resq_backend.accidentPatient.dto.AccidentPatientDtos;
+import at.resq.resq_backend.accidentPatient.dto.AccidentPatientRequestDtos;
 import at.resq.resq_backend.accidentPatient.dto.AccidentPatientMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,12 +33,12 @@ public class AccidentPatientService {
                 .orElseThrow(() -> new NoSuchElementException("AccidentPatient not found with id: " + id));
     }
 
-    public AccidentPatient createAccidentPatient(AccidentPatientDtos.AccidentPatientRequestDto dto) {
+    public AccidentPatient createAccidentPatient(AccidentPatientRequestDtos.AccidentPatientRequestDto dto) {
         AccidentPatient patient = accidentPatientMapper.toEntity(dto);
         return accidentPatientRepository.save(patient);
     }
 
-    public AccidentPatient updateAccidentPatient(Long id, AccidentPatientDtos.AccidentPatientRequestDto dto) {
+    public AccidentPatient updateAccidentPatient(Long id, AccidentPatientRequestDtos.AccidentPatientRequestDto dto) {
         AccidentPatient patient = accidentPatientRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("AccidentPatient not found with id: " + id));
 

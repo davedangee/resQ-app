@@ -3,11 +3,8 @@ package at.resq.resq_backend.accidentPatient.dto;
 
 import at.resq.resq_backend.accidentPatient.AccidentPatient;
 import at.resq.resq_backend.accidentPatient.embeddables.*;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.stereotype.Component;
 
 /**
  * Project: resQ-app-v1
@@ -27,16 +24,16 @@ public interface AccidentPatientMapper {
     @Mapping(source = "disabilityAssessment", target = "disabilityAssessment")
     @Mapping(source = "exposureAssessment", target = "exposureAssessment")
     @Mapping(source = "sampler", target = "sampler")
-    AccidentPatient toEntity(AccidentPatientDtos.AccidentPatientRequestDto dto);
+    AccidentPatient toEntity(AccidentPatientRequestDtos.AccidentPatientRequestDto dto);
 
     // Nested mappers
-    GuardianInfo toEntity(AccidentPatientDtos.GuardianInfoDto dto);
-    ConsciousnessAssessment toEntity(AccidentPatientDtos.ConsciousnessAssessmentDto dto);
-    AirwayAssessment toEntity(AccidentPatientDtos.AirwayAssessmentDto dto);
-    BreathingAssessment toEntity(AccidentPatientDtos.BreathingAssessmentDto dto);
-    CirculationAssessment toEntity(AccidentPatientDtos.CirculationAssessmentDto dto);
-    CprInfo toEntity(AccidentPatientDtos.CprInfoDto dto);
-    DisabilityAssessment toEntity(AccidentPatientDtos.DisabilityAssessmentDto dto);
-    ExposureAssessment toEntity(AccidentPatientDtos.ExposureAssessmentDto dto);
-    Sampler toEntity(AccidentPatientDtos.SamplerDto dto);
+    GuardianInfo toEntity(AccidentPatientRequestDtos.GuardianInfoDto dto);
+    ConsciousnessAssessment toEntity(AccidentPatientRequestDtos.ConsciousnessAssessmentDto dto);
+    AirwayAssessment toEntity(AccidentPatientRequestDtos.AirwayAssessmentDto dto);
+    BreathingAssessment toEntity(AccidentPatientRequestDtos.BreathingAssessmentDto dto);
+    CirculationAssessment toEntity(AccidentPatientRequestDtos.CirculationAssessmentDto dto);
+    CprInfo toEntity(AccidentPatientRequestDtos.CprInfoDto dto);
+    DisabilityAssessment toEntity(AccidentPatientRequestDtos.DisabilityAssessmentDto dto);
+    ExposureAssessment toEntity(AccidentPatientRequestDtos.ExposureAssessmentDto dto);
+    Sampler toEntity(AccidentPatientRequestDtos.SamplerDto dto);
 }

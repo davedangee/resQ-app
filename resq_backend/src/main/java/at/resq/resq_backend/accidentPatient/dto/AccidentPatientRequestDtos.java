@@ -2,6 +2,7 @@ package at.resq.resq_backend.accidentPatient.dto;
 
 
 import at.resq.resq_backend.accidentPatient.enums.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -19,7 +20,7 @@ import java.time.LocalDateTime;
  * Time: 20:07
  */
 
-public class AccidentPatientDtos {
+public class AccidentPatientRequestDtos {
 
     @Data @Builder @NoArgsConstructor @AllArgsConstructor
     public static class AccidentPatientRequestDto {
@@ -85,6 +86,7 @@ public class AccidentPatientDtos {
         private Boolean exhaustion;
         private Boolean shockPosition;
         private Boolean pressureBandage;
+        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
         private LocalDateTime tourniquetSince;
         private Boolean pelvicBinder;
         private String specificCirculationMeasure;
@@ -93,7 +95,9 @@ public class AccidentPatientDtos {
     @Data @Builder @NoArgsConstructor @AllArgsConstructor
     public static class CprInfoDto {
         private Boolean active;
+        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
         private LocalDateTime startTime;
+        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
         private LocalDateTime stopTime;
         private Integer amountOfShocks;
         private String abortDoctorsName;

@@ -1,6 +1,5 @@
 package at.resq.resq_backend.accidentPatient.medication;
 
-
 import at.resq.resq_backend.accidentPatient.AccidentPatient;
 import at.resq.resq_backend.accidentPatient.medication.type.Medication;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -28,7 +27,7 @@ public class MedicationAdministration {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "medication_id", nullable = false)
     private Medication medication;
 

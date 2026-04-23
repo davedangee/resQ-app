@@ -1,6 +1,6 @@
 package at.resq.resq_backend.accidentPatient;
 
-import at.resq.resq_backend.accidentPatient.dto.AccidentPatientDtos;
+import at.resq.resq_backend.accidentPatient.dto.AccidentPatientRequestDtos;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +47,7 @@ public class AccidentPatientController {
     }
 
     @PostMapping
-    public ResponseEntity<AccidentPatient> createAccidentPatient(@RequestBody @Valid AccidentPatientDtos.AccidentPatientRequestDto dto) {
+    public ResponseEntity<AccidentPatient> createAccidentPatient(@RequestBody @Valid AccidentPatientRequestDtos.AccidentPatientRequestDto dto) {
         try {
             AccidentPatient created = accidentPatientService.createAccidentPatient(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(created);
@@ -58,7 +58,7 @@ public class AccidentPatientController {
     }
 
     @PutMapping("/{id}")
-    private ResponseEntity<AccidentPatient> updateAccidentPatient(@PathVariable Long id, @RequestBody @Valid AccidentPatientDtos.AccidentPatientRequestDto dto) {
+    private ResponseEntity<AccidentPatient> updateAccidentPatient(@PathVariable Long id, @RequestBody @Valid AccidentPatientRequestDtos.AccidentPatientRequestDto dto) {
         try {
             AccidentPatient updated = accidentPatientService.updateAccidentPatient(id, dto);
             return ResponseEntity.ok(updated);
