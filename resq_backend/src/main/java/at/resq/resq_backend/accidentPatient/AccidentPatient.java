@@ -1,10 +1,17 @@
 package at.resq.resq_backend.accidentPatient;
 
+import at.resq.resq_backend.accidentPatient.embeddables.*;
 import at.resq.resq_backend.accidentPatient.enums.*;
+import at.resq.resq_backend.accidentPatient.injury.Injury;
+import at.resq.resq_backend.accidentPatient.medication.MedicationAdministration;
+import at.resq.resq_backend.accidentPatient.vitalSign.VitalSign;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Project: ${PROJECT_NAME}
@@ -26,83 +33,55 @@ public class AccidentPatient {
 
     private String mountainRescueInsurance;
 
-    private String guardianFirstName;
-    private String guardianLastName;
-    private String guardianSocialSecurityNumber;
-    private String guardianPhoneNumber;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "firstName", column = @Column(name = "guardian_first_name")),
+            @AttributeOverride(name = "lastName", column = @Column(name = "guardian_last_name")),
+            @AttributeOverride(name = "socialSecurityNumber", column = @Column(name = "guardian_social_security_number")),
+            @AttributeOverride(name = "phoneNumber", column = @Column(name = "guardian_phone_number"))
+    })
+    private GuardianInfo guardian;
 
     @Enumerated(EnumType.STRING) // day_guest, vacation_guest, unknown
     private GuestType guestType;
     private String holidayAddress;
     private Integer dayOfHoliday;
 
-    // ********** ABCDE - Schema **********
     // Patient found + Consciousness
     @Enumerated(EnumType.STRING)
     private PatientPosition patientPosition; // walking_standing, seating, laying, hanging, pronePosition, supinePosition, lateralPosition
     private String patientPositionSpecification; // Sonstiges: _______________
 
-    @Enumerated(EnumType.STRING)
-    private ConsciousnessState consciousnessState; // AWAKE, RESPONDS_TO_VOICE, RESPONDS_TO_PAIN, UNRESPONSIVE
+    private ConsciousnessAssessment consciousnessAssessment;
 
-    private Boolean orientedInTime;        // zeitlich orientiert
-    private Boolean orientedInPlace;       // örtlich orientiert
-    private Boolean orientedToPerson;      // persönlich orientiert
-    private Boolean orientedToSituation;   // situativ orientiert
+    // ABCDE - Schema
+    @Embedded private AirwayAssessment airwayAssessment;
+    @Embedded private BreathingAssessment breathingAssessment;
+    @Embedded private CirculationAssessment circulationAssessment;
+    @Embedded private DisabilityAssessment disabilityAssessment;
+    @Embedded private ExposureAssessment exposureAssessment;
+    @Embedded private Sampler sampler;
 
-    // *** A - B ***
-    private Boolean isAirwayClear;
-    private Boolean isRespirationNormal;
-    private Boolean isBreathShortened;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "active", column = @Column(name = "cpr_active")),
+            @AttributeOverride(name = "startTime", column = @Column(name = "cpr_start_time")),
+            @AttributeOverride(name = "stopTime", column = @Column(name = "cpr_stop_time")),
+            @AttributeOverride(name = "amountOfShocks", column = @Column(name = "cpr_amount_of_shocks")),
+            @AttributeOverride(name = "abortDoctorsName", column = @Column(name = "cpr_abort_doctors_name"))
+    })
+    private CprInfo cprInfo;
 
-    @Enumerated(EnumType.STRING)
-    private AirwayClearanceMethod airwayClearanceMethod; // MANUALLY, SUCTION, MAGILL_FORCEPS, ABDOMINAL_THRUST
+    @JsonManagedReference
+    @OneToMany(mappedBy = "accidentPatient", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
+    private List<Injury> injuryList;
 
-    // Measures
-    private Boolean manualVentilation;
-    private IntubationMethod intubationMethod;
-    private Integer oxygenAdministration;
-    private Boolean pleuralPuncture;
-    private String specificAirwayMeasure;
+    @JsonManagedReference
+    @OneToMany(mappedBy = "accidentPatient", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
+    private List<VitalSign> vitalSignList;
 
-    // *** C ***
-    // Skin
-    private Boolean isSkinCold;
-    private Boolean isSkinSweaty;
-    private Boolean isSkinPale;
-    private Boolean isSkinCyanotic;
-
-    private Boolean strongBleeding;
-    private Boolean cpr;
-    private LocalDateTime cprStartTime;
-    private LocalDateTime cprStopTime;
-    private Integer amountOfShocks;
-    private String cprAbortDoctorsName;
-    private Boolean ekgActive;
-
-    private Boolean exhaustion;
-
-    // Measures
-    private Boolean shockPosition;
-    private Boolean pressureBandage;
-    private LocalDateTime tourniquetSince;
-    private Boolean pelvicBinder;
-    private String specificCirculationMeasure;
-
-    // *** D ***
-    private Boolean headache;
-    private Boolean seizure;
-    private Boolean speakingDisorder;
-
-    private LimbSensation limbSensation; // NORMAL, TINGLING, NUMBNESS, PARALYSIS
-
-    private Boolean isPupilLeftLightRigid;
-    private Boolean isPupilRightLightRigid;
-
-    private PupilSize pupilSizeLeft; // NARROW, MIDDLE, WIDE
-    private PupilSize pupilSizeRight;
-
-    private Boolean fastTestSuspicious;
-    private Integer gcs;
+    @JsonManagedReference
+    @OneToMany(mappedBy = "accidentPatient", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
+    private List<MedicationAdministration> medicationAdministrationList;
 
 }
