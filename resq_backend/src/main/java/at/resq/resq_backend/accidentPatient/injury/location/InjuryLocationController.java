@@ -1,7 +1,6 @@
-package at.resq.resq_backend.accidentPatient.vitalSign.type;
+package at.resq.resq_backend.accidentPatient.injury.location;
 
 
-import at.resq.resq_backend.accidentPatient.medication.type.Medication;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,20 +15,20 @@ import java.util.NoSuchElementException;
  * Project: resQ-app-v1
  * Created by: Leitner David
  * Date: 23.04.2026
- * Time: 10:40
+ * Time: 13:32
  */
 
 @RestController
-@RequestMapping("api/v1/vitalSignType")
+@RequestMapping("api/v1/injuryLocation")
 @RequiredArgsConstructor
 @Slf4j
-public class VitalSignTypeController {
-    private final VitalSignTypeService vitalSignTypeService;
+public class InjuryLocationController {
+    private final InjuryLocationService injuryLocationService;
 
     @GetMapping("/all")
-    public ResponseEntity<Iterable<VitalSignType>> getAllVitalSignTypes() {
+    public ResponseEntity<Iterable<InjuryLocation>> getAllInjuryLocations() {
         try {
-            return ResponseEntity.ok(vitalSignTypeService.getAllVitalSignTypes());
+            return ResponseEntity.ok(injuryLocationService.getAllInjuryLocations());
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().build();
@@ -37,9 +36,9 @@ public class VitalSignTypeController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<VitalSignType> getVitalSignById(@PathVariable Long id) {
+    public ResponseEntity<InjuryLocation> getInjuryLocationById(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(vitalSignTypeService.getVitalSignById(id));
+            return ResponseEntity.ok(injuryLocationService.getInjuryLocationById(id));
         } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
