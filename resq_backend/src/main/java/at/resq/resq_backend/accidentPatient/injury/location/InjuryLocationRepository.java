@@ -10,5 +10,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * Time: 13:52
  */
 
-public interface InjuryLocationRepository extends JpaRepository<InjuryLocation, Integer> {
+public interface InjuryLocationRepository extends JpaRepository<InjuryLocation, Long> {
 }
