@@ -32,8 +32,8 @@ public class VitalSign {
     @JoinColumn(name = "vital_sign_type_id", nullable = false)
     private VitalSignType vitalSignType;
 
-    @Column(name = "value", nullable = false, precision = 5, scale = 2)
-    private BigDecimal value;
+    @Column(name = "value", nullable = false)
+    private String value;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime timestamp;
