@@ -28,24 +28,28 @@ public class VitalSignService {
     private final AccidentPatientRepository accidentPatientRepository;
     private final VitalSignTypeRepository vitalSignTypeRepository;
 
-    public List<VitalSign> getAllByPatientId(Long patientId) {
-        accidentPatientRepository.findById(patientId).orElseThrow(() -> new NoSuchElementException("AccidentPatient not found with id: " + patientId));
-        return vitalSignRepository.findAllByAccidentPatientId(patientId);
+    public List<VitalSign> getAllByReportId(Long reportId) {
+        AccidentPatient accidentPatient = accidentPatientRepository.findByIncidenceReportId(reportId)
+                .orElseThrow(() -> new NoSuchElementException("AccidentPatient not found for incidenceReport id: " + reportId));
+        return vitalSignRepository.findAllByAccidentPatientId(accidentPatient.getId());
     }
 
-    public VitalSign getByIdAndPatientId(Long id, Long patientId) {
-        return vitalSignRepository.findByIdAndAccidentPatientId(id, patientId)
+    public VitalSign getByIdAndReportId(Long id, Long reportId) {
+        AccidentPatient accidentPatient = accidentPatientRepository.findByIncidenceReportId(reportId)
+                .orElseThrow(() -> new NoSuchElementException("AccidentPatient not found for incidenceReport id: " + reportId));
+
+        return vitalSignRepository.findByIdAndAccidentPatientId(id, accidentPatient.getId())
                 .orElseThrow(() -> new NoSuchElementException("VitalSign not found with id: " + id));
     }
 
-    public VitalSign create(Long patientId, VitalSignRequestDto dto) {
-        AccidentPatient patient = accidentPatientRepository.findById(patientId)
-                .orElseThrow(() -> new NoSuchElementException("AccidentPatient not found with id: " + patientId));
+    public VitalSign create(Long reportId, VitalSignRequestDto dto) {
+        AccidentPatient accidentPatient = accidentPatientRepository.findByIncidenceReportId(reportId)
+                .orElseThrow(() -> new NoSuchElementException("AccidentPatient not found for incidenceReport id: " + reportId));
         VitalSignType vitalSignType = vitalSignTypeRepository.findById(dto.getVitalSignTypeId())
                 .orElseThrow(() -> new NoSuchElementException("VitalSignType not found with id: " + dto.getVitalSignTypeId()));
 
         VitalSign vitalSign = VitalSign.builder()
-                .accidentPatient(patient)
+                .accidentPatient(accidentPatient)
                 .vitalSignType(vitalSignType)
                 .value(dto.getValue())
                 .timestamp(dto.getTimestamp())
@@ -54,8 +58,11 @@ public class VitalSignService {
         return vitalSignRepository.save(vitalSign);
     }
 
-    public VitalSign update(Long id, Long patientId, VitalSignRequestDto dto) {
-        VitalSign existing = vitalSignRepository.findByIdAndAccidentPatientId(id, patientId)
+    public VitalSign update(Long id, Long reportId, VitalSignRequestDto dto) {
+        AccidentPatient accidentPatient = accidentPatientRepository.findByIncidenceReportId(reportId)
+                .orElseThrow(() -> new NoSuchElementException("AccidentPatient not found for incidenceReport id: " + reportId));
+
+        VitalSign existing = vitalSignRepository.findByIdAndAccidentPatientId(id, accidentPatient.getId())
                 .orElseThrow(() -> new NoSuchElementException("VitalSign not found with id: " + id));
 
         VitalSignType vitalSignType = vitalSignTypeRepository.findById(dto.getVitalSignTypeId())
@@ -68,8 +75,11 @@ public class VitalSignService {
         return vitalSignRepository.save(existing);
     }
 
-    public void delete(Long id, Long patientId) {
-        VitalSign existing = vitalSignRepository.findByIdAndAccidentPatientId(id, patientId)
+    public void delete(Long id, Long reportId) {
+        AccidentPatient accidentPatient = accidentPatientRepository.findByIncidenceReportId(reportId)
+                .orElseThrow(() -> new NoSuchElementException("AccidentPatient not found for incidenceReport id: " + reportId));
+
+        VitalSign existing = vitalSignRepository.findByIdAndAccidentPatientId(id, accidentPatient.getId())
                 .orElseThrow(() -> new NoSuchElementException("VitalSign not found with id: " + id));
         vitalSignRepository.delete(existing);
     }

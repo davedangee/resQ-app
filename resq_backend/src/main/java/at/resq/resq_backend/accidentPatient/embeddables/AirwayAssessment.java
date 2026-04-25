@@ -1,6 +1,5 @@
 package at.resq.resq_backend.accidentPatient.embeddables;
 
-
 import at.resq.resq_backend.accidentPatient.enums.AirwayClearanceMethod;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;

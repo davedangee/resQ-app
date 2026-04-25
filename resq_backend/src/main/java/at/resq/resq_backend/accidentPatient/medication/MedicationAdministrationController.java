@@ -20,7 +20,7 @@ import java.util.NoSuchElementException;
  * Time: 08:35
  */
 
-@RequestMapping("api/v1/accidentPatient/{patientId}/medicationAdministration")
+@RequestMapping("api/v1/incidenceReport/{reportId}/accidentPatient/medicationAdministration")
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -28,9 +28,9 @@ public class MedicationAdministrationController {
     private final MedicationAdministrationService medicationAdministrationService;
 
     @GetMapping
-    public ResponseEntity<Iterable<MedicationAdministration>> getAllByPatientId(@PathVariable Long patientId) {
+    public ResponseEntity<Iterable<MedicationAdministration>> getAllByPatientId(@PathVariable Long reportId) {
         try {
-            return ResponseEntity.ok(medicationAdministrationService.getAllByPatientId(patientId));
+            return ResponseEntity.ok(medicationAdministrationService.getAllByReportId(reportId));
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return ResponseEntity.notFound().build();
@@ -41,9 +41,9 @@ public class MedicationAdministrationController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MedicationAdministration> getByIdAndPatientId(@PathVariable Long patientId, @PathVariable Long id) {
+    public ResponseEntity<MedicationAdministration> getByIdAndPatientId(@PathVariable Long reportId, @PathVariable Long id) {
         try {
-            return ResponseEntity.ok(medicationAdministrationService.getByIdAndPatientId(id, patientId));
+            return ResponseEntity.ok(medicationAdministrationService.getByIdAndReportId(id, reportId));
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return ResponseEntity.notFound().build();
@@ -54,9 +54,9 @@ public class MedicationAdministrationController {
     }
 
     @PostMapping("/medication/{medicationId}")
-    public ResponseEntity<MedicationAdministration> create(@PathVariable Long patientId, @PathVariable Long medicationId, @RequestBody @Valid MedicationAdministrationRequestDto dto) {
+    public ResponseEntity<MedicationAdministration> create(@PathVariable Long reportId, @PathVariable Long medicationId, @RequestBody @Valid MedicationAdministrationRequestDto dto) {
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(medicationAdministrationService.create(patientId, medicationId, dto));
+            return ResponseEntity.status(HttpStatus.CREATED).body(medicationAdministrationService.create(reportId, medicationId, dto));
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return ResponseEntity.notFound().build();
@@ -67,9 +67,9 @@ public class MedicationAdministrationController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MedicationAdministration> update(@PathVariable Long patientId, @PathVariable Long id, @RequestBody @Valid MedicationAdministrationRequestDto dto) {
+    public ResponseEntity<MedicationAdministration> update(@PathVariable Long reportId, @PathVariable Long id, @RequestBody @Valid MedicationAdministrationRequestDto dto) {
         try {
-            return ResponseEntity.ok(medicationAdministrationService.update(id, patientId, dto));
+            return ResponseEntity.ok(medicationAdministrationService.update(id, reportId, dto));
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return ResponseEntity.notFound().build();
@@ -80,9 +80,9 @@ public class MedicationAdministrationController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long patientId, @PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long reportId, @PathVariable Long id) {
         try {
-            medicationAdministrationService.delete(id, patientId);
+            medicationAdministrationService.delete(id, reportId);
             return ResponseEntity.noContent().build();
         } catch (NoSuchElementException e) {
             e.printStackTrace();

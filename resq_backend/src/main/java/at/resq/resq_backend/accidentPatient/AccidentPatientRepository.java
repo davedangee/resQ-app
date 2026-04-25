@@ -3,6 +3,8 @@ package at.resq.resq_backend.accidentPatient;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 /**
  * Project: resQ-app-v1
  * Created by: Leitner David
@@ -11,4 +13,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 
 public interface AccidentPatientRepository extends JpaRepository<AccidentPatient, Long> {
+    Optional<AccidentPatient> findByIncidenceReportId(Long incidenceReportId);
 }

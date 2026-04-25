@@ -19,7 +19,7 @@ import java.util.NoSuchElementException;
  * Time: 12:59
  */
 
-@RequestMapping("api/v1/accidentPatient/{patientId}/injury")
+@RequestMapping("api/v1/incidenceReport/{reportId}/accidentPatient/injury")
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -27,9 +27,9 @@ public class InjuryController {
     private final InjuryService injuryService;
 
     @GetMapping
-    public ResponseEntity<Iterable<Injury>> getAllByPatientId(@PathVariable Long patientId) {
+    public ResponseEntity<Iterable<Injury>> getAllByPatientId(@PathVariable Long reportId) {
         try {
-            return ResponseEntity.ok(injuryService.getAllByPatientId(patientId));
+            return ResponseEntity.ok(injuryService.getAllByReportId(reportId));
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return ResponseEntity.notFound().build();
@@ -40,9 +40,9 @@ public class InjuryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Injury> getByIdAndPatientId(@PathVariable Long patientId, @PathVariable Long id) {
+    public ResponseEntity<Injury> getByIdAndReportId(@PathVariable Long reportId, @PathVariable Long id) {
         try {
-            return ResponseEntity.ok(injuryService.getByIdAndPatientId(id, patientId));
+            return ResponseEntity.ok(injuryService.getByIdAndReportId(id, reportId));
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return ResponseEntity.notFound().build();
@@ -53,9 +53,9 @@ public class InjuryController {
     }
 
     @PostMapping
-    public ResponseEntity<Injury> create(@PathVariable Long patientId, @RequestBody @Valid InjuryRequestDto dto) {
+    public ResponseEntity<Injury> create(@PathVariable Long reportId, @RequestBody @Valid InjuryRequestDto dto) {
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(injuryService.create(patientId, dto));
+            return ResponseEntity.status(HttpStatus.CREATED).body(injuryService.create(reportId, dto));
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return ResponseEntity.notFound().build();
@@ -72,9 +72,9 @@ public class InjuryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Injury> update(@PathVariable Long patientId, @PathVariable Long id, @RequestBody @Valid InjuryRequestDto dto) {
+    public ResponseEntity<Injury> update(@PathVariable Long reportId, @PathVariable Long id, @RequestBody @Valid InjuryRequestDto dto) {
         try {
-            return ResponseEntity.ok(injuryService.update(id, patientId, dto));
+            return ResponseEntity.ok(injuryService.update(id, reportId, dto));
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return ResponseEntity.notFound().build();
@@ -91,9 +91,9 @@ public class InjuryController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long patientId, @PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long reportId, @PathVariable Long id) {
         try {
-            injuryService.delete(id, patientId);
+            injuryService.delete(id, reportId);
             return ResponseEntity.noContent().build();
         } catch (NoSuchElementException e) {
             e.printStackTrace();

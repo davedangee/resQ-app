@@ -33,18 +33,21 @@ public class InjuryService {
     private final InjuryLocationRepository injuryLocationRepository;
     private final AccidentPatientRepository accidentPatientRepository;
 
-    public List<Injury> getAllByPatientId(Long patientId) {
-        accidentPatientRepository.findById(patientId)
-                .orElseThrow(() -> new NoSuchElementException("Patient not found with id: " + patientId));
-        return injuryRepository.findAllByAccidentPatientId(patientId);
+    public List<Injury> getAllByReportId(Long reportId) {
+        AccidentPatient accidentPatient = accidentPatientRepository.findByIncidenceReportId(reportId)
+                .orElseThrow(() -> new NoSuchElementException("AccidentPatient not found for incidenceReport id: " + reportId));
+        return injuryRepository.findAllByAccidentPatientId(accidentPatient.getId());
     }
 
-    public Injury getByIdAndPatientId(Long id, Long patientId) {
-        return injuryRepository.findByIdAndAccidentPatientId(id, patientId)
+    public Injury getByIdAndReportId(Long id, Long reportId) {
+       AccidentPatient accidentPatient = accidentPatientRepository.findByIncidenceReportId(reportId)
+                .orElseThrow(() -> new NoSuchElementException("AccidentPatient not found for incidenceReport id: " + reportId));
+
+        return injuryRepository.findByIdAndAccidentPatientId(id, accidentPatient.getId())
                 .orElseThrow(() -> new NoSuchElementException("Injury not found with id: " + id));
     }
 
-    public Injury create(Long patientId, InjuryRequestDto dto) {
+    public Injury create(Long reportId, InjuryRequestDto dto) {
         // validation
         if (dto.getInjuryTypeId() != null && dto.getCustomInjuryType() != null) {
             throw new IllegalArgumentException("Only one of injuryTypeId or customInjuryType can be provided");
@@ -53,8 +56,8 @@ public class InjuryService {
             throw new IllegalArgumentException("Either injuryTypeId or customInjuryType must be provided");
         }
 
-        AccidentPatient patient = accidentPatientRepository.findById(patientId)
-                .orElseThrow(() -> new NoSuchElementException("AccidentPatient not found with id: " + patientId));
+        AccidentPatient patient = accidentPatientRepository.findByIncidenceReportId(reportId)
+                .orElseThrow(() -> new NoSuchElementException("AccidentPatient not found for incidenceReport id: " + reportId));
 
         InjuryLocation injuryLocation = injuryLocationRepository.findById(dto.getInjuryLocationId())
                 .orElseThrow(() -> new NoSuchElementException("InjuryLocation not found with id: " + dto.getInjuryLocationId()));
@@ -90,7 +93,7 @@ public class InjuryService {
         }
     }
 
-    public Injury update(Long id, Long patientId, InjuryRequestDto dto) {
+    public Injury update(Long id, Long reportId, InjuryRequestDto dto) {
         if (dto.getInjuryTypeId() != null && dto.getCustomInjuryType() != null) {
             throw new IllegalArgumentException("Only one of injuryTypeId or customInjuryType can be provided");
         }
@@ -98,7 +101,10 @@ public class InjuryService {
             throw new IllegalArgumentException("Either injuryTypeId or customInjuryType must be provided");
         }
 
-        Injury existing = injuryRepository.findByIdAndAccidentPatientId(id, patientId)
+        AccidentPatient accidentPatient = accidentPatientRepository.findByIncidenceReportId(reportId)
+                .orElseThrow(() -> new NoSuchElementException("AccidentPatient not found for incidenceReport id: " + reportId));
+
+        Injury existing = injuryRepository.findByIdAndAccidentPatientId(id, accidentPatient.getId())
                 .orElseThrow(() -> new RuntimeException("Injury not found with id: " + id));
 
         InjuryLocation injuryLocation = injuryLocationRepository.findById(dto.getInjuryLocationId())
@@ -132,8 +138,11 @@ public class InjuryService {
         }
     }
 
-    public void delete(Long id, Long patientId) {
-        Injury existing = injuryRepository.findByIdAndAccidentPatientId(id, patientId)
+    public void delete(Long id, Long reportId) {
+        AccidentPatient accidentPatient = accidentPatientRepository.findByIncidenceReportId(reportId)
+                .orElseThrow(() -> new NoSuchElementException("AccidentPatient not found for incidenceReport id: " + reportId));
+
+        Injury existing = injuryRepository.findByIdAndAccidentPatientId(id, accidentPatient.getId())
                 .orElseThrow(() -> new NoSuchElementException("Injury not found with id: " + id));
         injuryRepository.delete(existing);
     }
