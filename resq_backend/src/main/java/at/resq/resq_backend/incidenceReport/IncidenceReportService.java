@@ -1,5 +1,7 @@
 package at.resq.resq_backend.incidenceReport;
 
+import at.resq.resq_backend.exceptionHandling.exceptions.InvalidRequestException;
+import at.resq.resq_backend.exceptionHandling.exceptions.ResourceNotFoundException;
 import at.resq.resq_backend.incidenceReport.dto.IncidenceReportRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +29,7 @@ public class IncidenceReportService {
 
     public IncidenceReport getIncidenceReportById(Long id) {
         return incidenceReportRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Incidence Report Not Found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Incidence Report Not Found with id: " + id));
     }
 
     public IncidenceReport create(IncidenceReportRequestDto dto) {
@@ -48,7 +50,7 @@ public class IncidenceReportService {
 
     public IncidenceReport patch(Long id, JsonNode patchNode) {
         IncidenceReport existing = incidenceReportRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("IncidenceReport not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("IncidenceReport not found with id: " + id));
 
         validatePatchPayload(patchNode);
 
@@ -67,19 +69,19 @@ public class IncidenceReportService {
 
     public void deleteIncidenceReport(Long id) {
         incidenceReportRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Incidence Report Not Found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Incidence Report Not Found with id: " + id));
 
         incidenceReportRepository.deleteById(id);
     }
 
     private void validatePatchPayload(JsonNode patchNode) {
         if (patchNode == null || !patchNode.isObject()) {
-            throw new IllegalArgumentException("Patch body must be a JSON object");
+            throw new InvalidRequestException("Patch body must be a JSON object");
         }
 
         FORBIDDEN_PATCH_FIELDS.forEach(field -> {
             if (patchNode.has(field)) {
-                throw new IllegalArgumentException("Field '" + field + "' cannot be patched here");
+                throw new InvalidRequestException("Field '" + field + "' cannot be patched here");
             }
         });
     }
@@ -105,7 +107,7 @@ public class IncidenceReportService {
         }
 
         if (!valueNode.isNumber()) {
-            throw new IllegalArgumentException("Field '" + fieldName + "' must be a number");
+            throw new InvalidRequestException("Field '" + fieldName + "' must be a number");
         }
 
         setter.accept(valueNode.longValue());
@@ -123,7 +125,7 @@ public class IncidenceReportService {
         }
 
         if (!valueNode.isString()) {
-            throw new IllegalArgumentException("Field '" + fieldName + "' must be a string with format yyyy-MM-dd'T'HH:mm");
+            throw new InvalidRequestException("Field '" + fieldName + "' must be a string with format yyyy-MM-dd'T'HH:mm");
         }
 
         setter.accept(LocalDateTime.parse(valueNode.asText()));

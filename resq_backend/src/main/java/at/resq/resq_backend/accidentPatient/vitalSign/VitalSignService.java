@@ -6,6 +6,7 @@ import at.resq.resq_backend.accidentPatient.AccidentPatientRepository;
 import at.resq.resq_backend.accidentPatient.vitalSign.dto.VitalSignRequestDto;
 import at.resq.resq_backend.accidentPatient.vitalSign.type.VitalSignType;
 import at.resq.resq_backend.accidentPatient.vitalSign.type.VitalSignTypeRepository;
+import at.resq.resq_backend.exceptionHandling.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,23 +31,23 @@ public class VitalSignService {
 
     public List<VitalSign> getAllByReportId(Long reportId) {
         AccidentPatient accidentPatient = accidentPatientRepository.findByIncidenceReportId(reportId)
-                .orElseThrow(() -> new NoSuchElementException("AccidentPatient not found for incidenceReport id: " + reportId));
+                .orElseThrow(() -> new ResourceNotFoundException("AccidentPatient not found for incidenceReport id: " + reportId));
         return vitalSignRepository.findAllByAccidentPatientId(accidentPatient.getId());
     }
 
     public VitalSign getByIdAndReportId(Long id, Long reportId) {
         AccidentPatient accidentPatient = accidentPatientRepository.findByIncidenceReportId(reportId)
-                .orElseThrow(() -> new NoSuchElementException("AccidentPatient not found for incidenceReport id: " + reportId));
+                .orElseThrow(() -> new ResourceNotFoundException("AccidentPatient not found for incidenceReport id: " + reportId));
 
         return vitalSignRepository.findByIdAndAccidentPatientId(id, accidentPatient.getId())
-                .orElseThrow(() -> new NoSuchElementException("VitalSign not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("VitalSign not found with id: " + id));
     }
 
     public VitalSign create(Long reportId, VitalSignRequestDto dto) {
         AccidentPatient accidentPatient = accidentPatientRepository.findByIncidenceReportId(reportId)
-                .orElseThrow(() -> new NoSuchElementException("AccidentPatient not found for incidenceReport id: " + reportId));
+                .orElseThrow(() -> new ResourceNotFoundException("AccidentPatient not found for incidenceReport id: " + reportId));
         VitalSignType vitalSignType = vitalSignTypeRepository.findById(dto.getVitalSignTypeId())
-                .orElseThrow(() -> new NoSuchElementException("VitalSignType not found with id: " + dto.getVitalSignTypeId()));
+                .orElseThrow(() -> new ResourceNotFoundException("VitalSignType not found with id: " + dto.getVitalSignTypeId()));
 
         VitalSign vitalSign = VitalSign.builder()
                 .accidentPatient(accidentPatient)
@@ -60,13 +61,13 @@ public class VitalSignService {
 
     public VitalSign update(Long id, Long reportId, VitalSignRequestDto dto) {
         AccidentPatient accidentPatient = accidentPatientRepository.findByIncidenceReportId(reportId)
-                .orElseThrow(() -> new NoSuchElementException("AccidentPatient not found for incidenceReport id: " + reportId));
+                .orElseThrow(() -> new ResourceNotFoundException("AccidentPatient not found for incidenceReport id: " + reportId));
 
         VitalSign existing = vitalSignRepository.findByIdAndAccidentPatientId(id, accidentPatient.getId())
-                .orElseThrow(() -> new NoSuchElementException("VitalSign not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("VitalSign not found with id: " + id));
 
         VitalSignType vitalSignType = vitalSignTypeRepository.findById(dto.getVitalSignTypeId())
-                .orElseThrow(() -> new NoSuchElementException("VitalSignType not found with id: " + dto.getVitalSignTypeId()));
+                .orElseThrow(() -> new ResourceNotFoundException("VitalSignType not found with id: " + dto.getVitalSignTypeId()));
 
         existing.setVitalSignType(vitalSignType);
         existing.setValue(dto.getValue());
@@ -77,10 +78,10 @@ public class VitalSignService {
 
     public void delete(Long id, Long reportId) {
         AccidentPatient accidentPatient = accidentPatientRepository.findByIncidenceReportId(reportId)
-                .orElseThrow(() -> new NoSuchElementException("AccidentPatient not found for incidenceReport id: " + reportId));
+                .orElseThrow(() -> new ResourceNotFoundException("AccidentPatient not found for incidenceReport id: " + reportId));
 
         VitalSign existing = vitalSignRepository.findByIdAndAccidentPatientId(id, accidentPatient.getId())
-                .orElseThrow(() -> new NoSuchElementException("VitalSign not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("VitalSign not found with id: " + id));
         vitalSignRepository.delete(existing);
     }
 }

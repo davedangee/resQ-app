@@ -28,79 +28,27 @@ public class InjuryController {
 
     @GetMapping
     public ResponseEntity<Iterable<Injury>> getAllByPatientId(@PathVariable Long reportId) {
-        try {
-            return ResponseEntity.ok(injuryService.getAllByReportId(reportId));
-        } catch (NoSuchElementException e) {
-            e.printStackTrace();
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.ok(injuryService.getAllByReportId(reportId));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Injury> getByIdAndReportId(@PathVariable Long reportId, @PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(injuryService.getByIdAndReportId(id, reportId));
-        } catch (NoSuchElementException e) {
-            e.printStackTrace();
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.ok(injuryService.getByIdAndReportId(id, reportId));
     }
 
     @PostMapping
     public ResponseEntity<Injury> create(@PathVariable Long reportId, @RequestBody @Valid InjuryRequestDto dto) {
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(injuryService.create(reportId, dto));
-        } catch (NoSuchElementException e) {
-            e.printStackTrace();
-            return ResponseEntity.notFound().build();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().build();
-        } catch (DataIntegrityViolationException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(injuryService.create(reportId, dto));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Injury> update(@PathVariable Long reportId, @PathVariable Long id, @RequestBody @Valid InjuryRequestDto dto) {
-        try {
-            return ResponseEntity.ok(injuryService.update(id, reportId, dto));
-        } catch (NoSuchElementException e) {
-            e.printStackTrace();
-            return ResponseEntity.notFound().build();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().build();
-        } catch (DataIntegrityViolationException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.ok(injuryService.update(id, reportId, dto));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long reportId, @PathVariable Long id) {
-        try {
-            injuryService.delete(id, reportId);
-            return ResponseEntity.noContent().build();
-        } catch (NoSuchElementException e) {
-            e.printStackTrace();
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().build();
-        }
+        injuryService.delete(id, reportId);
+        return ResponseEntity.noContent().build();
     }
 }

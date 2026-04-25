@@ -39,68 +39,29 @@ public class AccidentPatientController {
 
     @GetMapping
     public ResponseEntity<AccidentPatient> getAccidentPatientById(@PathVariable Long reportId) {
-        try {
-            return ResponseEntity.ok(accidentPatientService.getAccidentPatientByReportId(reportId));
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+        return ResponseEntity.ok(accidentPatientService.getAccidentPatientByReportId(reportId));
     }
 
     @PostMapping
     public ResponseEntity<AccidentPatient> createAccidentPatient(@PathVariable Long reportId, @RequestBody @Valid AccidentPatientRequestDtos.AccidentPatientRequestDto dto) {
-        try {
-            AccidentPatient created = accidentPatientService.createAccidentPatient(reportId, dto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(created);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().build();
-        }
+        AccidentPatient created = accidentPatientService.createAccidentPatient(reportId, dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping
     public ResponseEntity<AccidentPatient> updateAccidentPatient(@PathVariable Long reportId, @RequestBody @Valid AccidentPatientRequestDtos.AccidentPatientRequestDto dto) {
-        try {
-            AccidentPatient updated = accidentPatientService.updateAccidentPatient(reportId, dto);
-            return ResponseEntity.ok(updated);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e){
-            e.printStackTrace();
-            return ResponseEntity.badRequest().build();
-        }
+        AccidentPatient updated = accidentPatientService.updateAccidentPatient(reportId, dto);
+        return ResponseEntity.ok(updated);
     }
 
     @PatchMapping
-    public ResponseEntity<AccidentPatient> patch(
-            @PathVariable Long reportId,
-            @RequestBody JsonNode patchNode
-    ) {
-        try {
-            return ResponseEntity.ok(accidentPatientService.patchAccidentPatient(reportId, patchNode));
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.notFound().build();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
-        }
+    public ResponseEntity<AccidentPatient> patch(@PathVariable Long reportId, @RequestBody JsonNode patchNode) {
+        return ResponseEntity.ok(accidentPatientService.patchAccidentPatient(reportId, patchNode));
     }
 
     @DeleteMapping
     public ResponseEntity<Void> deleteAccidentPatient(@PathVariable Long reportId) {
-        try {
-            accidentPatientService.deleteAccidentPatientByReportId(reportId);
-            return ResponseEntity.noContent().build(); // 204
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().build();
-        }
+        accidentPatientService.deleteAccidentPatientByReportId(reportId);
+        return ResponseEntity.noContent().build(); // 204
     }
 }

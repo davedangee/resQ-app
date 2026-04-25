@@ -28,67 +28,27 @@ public class VitalSignController {
 
     @GetMapping
     public ResponseEntity<Iterable<VitalSign>> getAllByPatientId(@PathVariable Long reportId) {
-        try {
-            return ResponseEntity.ok(vitalSignService.getAllByReportId(reportId));
-        } catch (NoSuchElementException e) {
-            e.printStackTrace();
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.ok(vitalSignService.getAllByReportId(reportId));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<VitalSign> getByIdAndPatientId(@PathVariable Long reportId, @PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(vitalSignService.getByIdAndReportId(id, reportId));
-        } catch (NoSuchElementException e) {
-            e.printStackTrace();
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.ok(vitalSignService.getByIdAndReportId(id, reportId));
     }
 
     @PostMapping
     public ResponseEntity<VitalSign> create(@PathVariable Long reportId, @RequestBody @Valid VitalSignRequestDto dto) {
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(vitalSignService.create(reportId, dto));
-        } catch (NoSuchElementException e) {
-            e.printStackTrace();
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(vitalSignService.create(reportId, dto));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<VitalSign> update(@PathVariable Long reportId, @PathVariable Long id, @RequestBody @Valid VitalSignRequestDto dto) {
-        try {
-            return ResponseEntity.ok(vitalSignService.update(id, reportId, dto));
-        } catch (NoSuchElementException e) {
-            e.printStackTrace();
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.ok(vitalSignService.update(id, reportId, dto));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long reportId, @PathVariable Long id) {
-        try {
-            vitalSignService.delete(id, reportId);
-            return ResponseEntity.noContent().build();
-        } catch (NoSuchElementException e) {
-            e.printStackTrace();
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().build();
-        }
+        vitalSignService.delete(id, reportId);
+        return ResponseEntity.noContent().build();
     }
 }

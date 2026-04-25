@@ -8,6 +8,9 @@ import at.resq.resq_backend.accidentPatient.injury.location.InjuryLocation;
 import at.resq.resq_backend.accidentPatient.injury.location.InjuryLocationRepository;
 import at.resq.resq_backend.accidentPatient.injury.type.InjuryType;
 import at.resq.resq_backend.accidentPatient.injury.type.InjuryTypeRepository;
+import at.resq.resq_backend.exceptionHandling.exceptions.InvalidRequestException;
+import at.resq.resq_backend.exceptionHandling.exceptions.ResourceAlreadyExistsException;
+import at.resq.resq_backend.exceptionHandling.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -35,32 +38,32 @@ public class InjuryService {
 
     public List<Injury> getAllByReportId(Long reportId) {
         AccidentPatient accidentPatient = accidentPatientRepository.findByIncidenceReportId(reportId)
-                .orElseThrow(() -> new NoSuchElementException("AccidentPatient not found for incidenceReport id: " + reportId));
+                .orElseThrow(() -> new ResourceNotFoundException("AccidentPatient not found for incidenceReport id: " + reportId));
         return injuryRepository.findAllByAccidentPatientId(accidentPatient.getId());
     }
 
     public Injury getByIdAndReportId(Long id, Long reportId) {
        AccidentPatient accidentPatient = accidentPatientRepository.findByIncidenceReportId(reportId)
-                .orElseThrow(() -> new NoSuchElementException("AccidentPatient not found for incidenceReport id: " + reportId));
+                .orElseThrow(() -> new ResourceNotFoundException("AccidentPatient not found for incidenceReport id: " + reportId));
 
         return injuryRepository.findByIdAndAccidentPatientId(id, accidentPatient.getId())
-                .orElseThrow(() -> new NoSuchElementException("Injury not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Injury not found with id: " + id));
     }
 
     public Injury create(Long reportId, InjuryRequestDto dto) {
         // validation
         if (dto.getInjuryTypeId() != null && dto.getCustomInjuryType() != null) {
-            throw new IllegalArgumentException("Only one of injuryTypeId or customInjuryType can be provided");
+            throw new InvalidRequestException("Only one of injuryTypeId or customInjuryType can be provided");
         }
         if (dto.getInjuryTypeId() == null && dto.getCustomInjuryType() == null) {
-            throw new IllegalArgumentException("Either injuryTypeId or customInjuryType must be provided");
+            throw new InvalidRequestException("Either injuryTypeId or customInjuryType must be provided");
         }
 
         AccidentPatient patient = accidentPatientRepository.findByIncidenceReportId(reportId)
-                .orElseThrow(() -> new NoSuchElementException("AccidentPatient not found for incidenceReport id: " + reportId));
+                .orElseThrow(() -> new ResourceNotFoundException("AccidentPatient not found for incidenceReport id: " + reportId));
 
         InjuryLocation injuryLocation = injuryLocationRepository.findById(dto.getInjuryLocationId())
-                .orElseThrow(() -> new NoSuchElementException("InjuryLocation not found with id: " + dto.getInjuryLocationId()));
+                .orElseThrow(() -> new ResourceNotFoundException("InjuryLocation not found with id: " + dto.getInjuryLocationId()));
 
         InjuryType injuryType;
         if (dto.getCustomInjuryType() != null) {
@@ -77,7 +80,7 @@ public class InjuryService {
             }
         } else {
             injuryType = injuryTypeRepository.findById(dto.getInjuryTypeId())
-                    .orElseThrow(() -> new NoSuchElementException("InjuryType not found with id: " + dto.getInjuryTypeId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("InjuryType not found with id: " + dto.getInjuryTypeId()));
         }
 
         try {
@@ -89,26 +92,26 @@ public class InjuryService {
                     .build();
             return injuryRepository.save(injury);
         } catch (DataIntegrityViolationException e) {
-            throw new IllegalArgumentException("This injury type at this location already exists for this patient");
+            throw new ResourceAlreadyExistsException("This injury type at this location already exists for this patient");
         }
     }
 
     public Injury update(Long id, Long reportId, InjuryRequestDto dto) {
         if (dto.getInjuryTypeId() != null && dto.getCustomInjuryType() != null) {
-            throw new IllegalArgumentException("Only one of injuryTypeId or customInjuryType can be provided");
+            throw new InvalidRequestException("Only one of injuryTypeId or customInjuryType can be provided");
         }
         if (dto.getInjuryTypeId() == null && dto.getCustomInjuryType() == null) {
-            throw new IllegalArgumentException("Either injuryTypeId or customInjuryType must be provided");
+            throw new InvalidRequestException("Either injuryTypeId or customInjuryType must be provided");
         }
 
         AccidentPatient accidentPatient = accidentPatientRepository.findByIncidenceReportId(reportId)
-                .orElseThrow(() -> new NoSuchElementException("AccidentPatient not found for incidenceReport id: " + reportId));
+                .orElseThrow(() -> new ResourceNotFoundException("AccidentPatient not found for incidenceReport id: " + reportId));
 
         Injury existing = injuryRepository.findByIdAndAccidentPatientId(id, accidentPatient.getId())
-                .orElseThrow(() -> new RuntimeException("Injury not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Injury not found with id: " + id));
 
         InjuryLocation injuryLocation = injuryLocationRepository.findById(dto.getInjuryLocationId())
-                .orElseThrow(() -> new RuntimeException("InjuryLocation not found with id: " + dto.getInjuryLocationId()));
+                .orElseThrow(() -> new ResourceNotFoundException("InjuryLocation not found with id: " + dto.getInjuryLocationId()));
         
         InjuryType injuryType;
         if (dto.getCustomInjuryType() != null) {
@@ -125,7 +128,7 @@ public class InjuryService {
             }
         } else {
             injuryType = injuryTypeRepository.findById(dto.getInjuryTypeId())
-                    .orElseThrow(() -> new RuntimeException("InjuryType not found with id: " + dto.getInjuryTypeId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("InjuryType not found with id: " + dto.getInjuryTypeId()));
         }
 
         try {
@@ -134,16 +137,16 @@ public class InjuryService {
             existing.setNote(dto.getNote());
             return injuryRepository.save(existing);
         } catch (DataIntegrityViolationException e) {
-            throw new IllegalArgumentException("This injury type at this location already exists for this patient");
+            throw new ResourceAlreadyExistsException("This injury type at this location already exists for this patient");
         }
     }
 
     public void delete(Long id, Long reportId) {
         AccidentPatient accidentPatient = accidentPatientRepository.findByIncidenceReportId(reportId)
-                .orElseThrow(() -> new NoSuchElementException("AccidentPatient not found for incidenceReport id: " + reportId));
+                .orElseThrow(() -> new ResourceNotFoundException("AccidentPatient not found for incidenceReport id: " + reportId));
 
         Injury existing = injuryRepository.findByIdAndAccidentPatientId(id, accidentPatient.getId())
-                .orElseThrow(() -> new NoSuchElementException("Injury not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Injury not found with id: " + id));
         injuryRepository.delete(existing);
     }
 }

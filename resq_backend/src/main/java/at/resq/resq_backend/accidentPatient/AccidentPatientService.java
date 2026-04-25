@@ -5,6 +5,9 @@ import at.resq.resq_backend.accidentPatient.dto.AccidentPatientRequestDtos;
 import at.resq.resq_backend.accidentPatient.dto.AccidentPatientMapper;
 import at.resq.resq_backend.accidentPatient.embeddables.*;
 import at.resq.resq_backend.accidentPatient.enums.*;
+import at.resq.resq_backend.exceptionHandling.exceptions.InvalidRequestException;
+import at.resq.resq_backend.exceptionHandling.exceptions.ResourceAlreadyExistsException;
+import at.resq.resq_backend.exceptionHandling.exceptions.ResourceNotFoundException;
 import at.resq.resq_backend.incidenceReport.IncidenceReport;
 import at.resq.resq_backend.incidenceReport.IncidenceReportRepository;
 import lombok.RequiredArgsConstructor;
@@ -40,15 +43,15 @@ public class AccidentPatientService {
 
     public AccidentPatient getAccidentPatientByReportId(Long reportId) {
         return accidentPatientRepository.findByIncidenceReportId(reportId)
-                .orElseThrow(() -> new NoSuchElementException("AccidentPatient not found for incidenceReport id: " + reportId));
+                .orElseThrow(() -> new ResourceNotFoundException("AccidentPatient not found for incidenceReport id: " + reportId));
     }
 
     public AccidentPatient createAccidentPatient(Long reportId, AccidentPatientRequestDtos.AccidentPatientRequestDto dto) {
         IncidenceReport incidenceReport = incidenceReportRepository.findById(reportId)
-                .orElseThrow(() -> new NoSuchElementException("Incidence Report not found for reportId: " + reportId));
+                .orElseThrow(() -> new ResourceNotFoundException("Incidence Report not found for reportId: " + reportId));
 
         if(accidentPatientRepository.findByIncidenceReportId(incidenceReport.getId()).isPresent()) {
-            throw new IllegalArgumentException("AccidentPatient already exists for reportId: " + incidenceReport.getId());
+            throw new ResourceAlreadyExistsException("AccidentPatient already exists for reportId: " + incidenceReport.getId());
         }
 
         AccidentPatient accidentPatient = accidentPatientMapper.toEntity(dto);
@@ -59,7 +62,7 @@ public class AccidentPatientService {
 
     public AccidentPatient updateAccidentPatient(Long reportId, AccidentPatientRequestDtos.AccidentPatientRequestDto dto) {
         AccidentPatient existing = accidentPatientRepository.findByIncidenceReportId(reportId)
-                .orElseThrow(() -> new NoSuchElementException("AccidentPatient not found for incidenceReport id: " + reportId));
+                .orElseThrow(() -> new ResourceNotFoundException("AccidentPatient not found for incidenceReport id: " + reportId));
 
         existing.setMountainRescueInsurance(dto.getMountainRescueInsurance());
         existing.setGuardian(accidentPatientMapper.toEntity(dto.getGuardian()));
@@ -82,9 +85,7 @@ public class AccidentPatientService {
 
     public AccidentPatient patchAccidentPatient(Long reportId, JsonNode patchNode) {
         AccidentPatient existing = accidentPatientRepository.findByIncidenceReportId(reportId)
-                .orElseThrow(() -> new NoSuchElementException(
-                        "AccidentPatient not found for incidenceReport id: " + reportId
-                ));
+                .orElseThrow(() -> new ResourceNotFoundException("AccidentPatient not found for incidenceReport id: " + reportId));
 
         validatePatchPayload(patchNode);
 
@@ -110,9 +111,7 @@ public class AccidentPatientService {
 
     public void deleteAccidentPatientByReportId(Long reportId) {
         AccidentPatient existing = accidentPatientRepository.findByIncidenceReportId(reportId)
-                .orElseThrow(() -> new NoSuchElementException(
-                        "AccidentPatient not found for incidenceReport id: " + reportId
-                ));
+                .orElseThrow(() -> new ResourceNotFoundException("AccidentPatient not found for incidenceReport id: " + reportId));
 
         IncidenceReport incidenceReport = existing.getIncidenceReport();
         if (incidenceReport != null) {
@@ -129,12 +128,12 @@ public class AccidentPatientService {
 
     void validatePatchPayload(JsonNode patchNode) {
         if (patchNode == null || !patchNode.isObject()) {
-            throw new IllegalArgumentException("Patch body must be a JSON object");
+            throw new InvalidRequestException("Patch body must be a JSON object");
         }
 
         FORBIDDEN_PATCH_FIELDS.forEach(field -> {
             if (patchNode.has(field)) {
-                throw new IllegalArgumentException("Field '" + field + "' cannot be patched here");
+                throw new InvalidRequestException("Field '" + field + "' cannot be patched here");
             }
         });
     }
@@ -148,7 +147,7 @@ public class AccidentPatientService {
             return;
         }
         if (!node.isObject()) {
-            throw new IllegalArgumentException("Field 'guardian' must be a JSON object");
+            throw new InvalidRequestException("Field 'guardian' must be a JSON object");
         }
 
         GuardianInfo guardian = existing.getGuardian() != null ? existing.getGuardian() : new GuardianInfo();
@@ -168,7 +167,7 @@ public class AccidentPatientService {
             return;
         }
         if (!node.isObject()) {
-            throw new IllegalArgumentException("Field 'consciousnessAssessment' must be a JSON object");
+            throw new InvalidRequestException("Field 'consciousnessAssessment' must be a JSON object");
         }
 
         ConsciousnessAssessment value = existing.getConsciousnessAssessment() != null
@@ -193,7 +192,7 @@ public class AccidentPatientService {
             return;
         }
         if (!node.isObject()) {
-            throw new IllegalArgumentException("Field 'airwayAssessment' must be a JSON object");
+            throw new InvalidRequestException("Field 'airwayAssessment' must be a JSON object");
         }
 
         AirwayAssessment value = existing.getAirwayAssessment() != null
@@ -216,7 +215,7 @@ public class AccidentPatientService {
             return;
         }
         if (!node.isObject()) {
-            throw new IllegalArgumentException("Field 'breathingAssessment' must be a JSON object");
+            throw new InvalidRequestException("Field 'breathingAssessment' must be a JSON object");
         }
 
         BreathingAssessment value = existing.getBreathingAssessment() != null
@@ -242,7 +241,7 @@ public class AccidentPatientService {
             return;
         }
         if (!node.isObject()) {
-            throw new IllegalArgumentException("Field 'circulationAssessment' must be a JSON object");
+            throw new InvalidRequestException("Field 'circulationAssessment' must be a JSON object");
         }
 
         CirculationAssessment value = existing.getCirculationAssessment() != null
@@ -273,7 +272,7 @@ public class AccidentPatientService {
             return;
         }
         if (!node.isObject()) {
-            throw new IllegalArgumentException("Field 'disabilityAssessment' must be a JSON object");
+            throw new InvalidRequestException("Field 'disabilityAssessment' must be a JSON object");
         }
 
         DisabilityAssessment value = existing.getDisabilityAssessment() != null
@@ -303,7 +302,7 @@ public class AccidentPatientService {
             return;
         }
         if (!node.isObject()) {
-            throw new IllegalArgumentException("Field 'exposureAssessment' must be a JSON object");
+            throw new InvalidRequestException("Field 'exposureAssessment' must be a JSON object");
         }
 
         ExposureAssessment value = existing.getExposureAssessment() != null
@@ -327,7 +326,7 @@ public class AccidentPatientService {
             return;
         }
         if (!node.isObject()) {
-            throw new IllegalArgumentException("Field 'sampler' must be a JSON object");
+            throw new InvalidRequestException("Field 'sampler' must be a JSON object");
         }
 
         Sampler value = existing.getSampler() != null
@@ -355,7 +354,7 @@ public class AccidentPatientService {
             return;
         }
         if (!node.isObject()) {
-            throw new IllegalArgumentException("Field 'cprInfo' must be a JSON object");
+            throw new InvalidRequestException("Field 'cprInfo' must be a JSON object");
         }
 
         CprInfo value = existing.getCprInfo() != null
@@ -393,7 +392,7 @@ public class AccidentPatientService {
         }
 
         if (!valueNode.isNumber()) {
-            throw new IllegalArgumentException("Field '" + fieldName + "' must be a number");
+            throw new InvalidRequestException("Field '" + fieldName + "' must be a number");
         }
 
         setter.accept(valueNode.intValue());
@@ -411,7 +410,7 @@ public class AccidentPatientService {
         }
 
         if (!valueNode.isBoolean()) {
-            throw new IllegalArgumentException("Field '" + fieldName + "' must be a boolean");
+            throw new InvalidRequestException("Field '" + fieldName + "' must be a boolean");
         }
 
         setter.accept(valueNode.booleanValue());
@@ -429,7 +428,7 @@ public class AccidentPatientService {
         }
 
         if (!valueNode.isNumber()) {
-            throw new IllegalArgumentException("Field '" + fieldName + "' must be a number");
+            throw new InvalidRequestException("Field '" + fieldName + "' must be a number");
         }
 
         setter.accept(valueNode.longValue());
@@ -447,9 +446,7 @@ public class AccidentPatientService {
         }
 
         if (!valueNode.isString()) {
-            throw new IllegalArgumentException(
-                    "Field '" + fieldName + "' must be a string with format yyyy-MM-dd'T'HH:mm[:ss]"
-            );
+            throw new InvalidRequestException("Field '" + fieldName + "' must be a string with format yyyy-MM-dd'T'HH:mm[:ss]");
         }
 
         setter.accept(LocalDateTime.parse(valueNode.asText()));
@@ -472,15 +469,13 @@ public class AccidentPatientService {
         }
 
         if (!valueNode.isString()) {
-            throw new IllegalArgumentException("Field '" + fieldName + "' must be a string");
+            throw new InvalidRequestException("Field '" + fieldName + "' must be a string");
         }
 
         try {
             setter.accept(Enum.valueOf(enumClass, valueNode.asText()));
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(
-                    "Field '" + fieldName + "' has invalid value '" + valueNode.asText() + "'"
-            );
+            throw new InvalidRequestException("Field '" + fieldName + "' has invalid value '" + valueNode.asText() + "'");
         }
     }
 }
