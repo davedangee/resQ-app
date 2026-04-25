@@ -5,6 +5,8 @@ import at.resq.resq_backend.accidentPatient.enums.*;
 import at.resq.resq_backend.accidentPatient.injury.Injury;
 import at.resq.resq_backend.accidentPatient.medication.MedicationAdministration;
 import at.resq.resq_backend.accidentPatient.vitalSign.VitalSign;
+import at.resq.resq_backend.incidenceReport.IncidenceReport;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -25,11 +27,19 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Getter
+@ToString
 @Setter
 public class AccidentPatient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    // AccidentPatient owns
+    @JsonBackReference
+    @ToString.Exclude
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "incidenceReportId", unique = true)
+    private IncidenceReport incidenceReport;
 
     private String mountainRescueInsurance;
 
@@ -52,6 +62,7 @@ public class AccidentPatient {
     private PatientPosition patientPosition; // walking_standing, seating, laying, hanging, pronePosition, supinePosition, lateralPosition
     private String patientPositionSpecification; // Sonstiges: _______________
 
+    @Embedded
     private ConsciousnessAssessment consciousnessAssessment;
 
     // ABCDE - Schema
@@ -73,14 +84,17 @@ public class AccidentPatient {
     private CprInfo cprInfo;
 
     @JsonManagedReference
+    @ToString.Exclude
     @OneToMany(mappedBy = "accidentPatient", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
     private List<Injury> injuryList;
 
     @JsonManagedReference
+    @ToString.Exclude
     @OneToMany(mappedBy = "accidentPatient", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
     private List<VitalSign> vitalSignList;
 
     @JsonManagedReference
+    @ToString.Exclude
     @OneToMany(mappedBy = "accidentPatient", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
     private List<MedicationAdministration> medicationAdministrationList;
 

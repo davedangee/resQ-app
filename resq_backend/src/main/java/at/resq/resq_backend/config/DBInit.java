@@ -9,6 +9,8 @@ import at.resq.resq_backend.accidentPatient.medication.type.Medication;
 import at.resq.resq_backend.accidentPatient.medication.type.MedicationRepository;
 import at.resq.resq_backend.accidentPatient.vitalSign.type.VitalSignType;
 import at.resq.resq_backend.accidentPatient.vitalSign.type.VitalSignTypeRepository;
+import at.resq.resq_backend.incidenceReport.handover.type.HandoverType;
+import at.resq.resq_backend.incidenceReport.handover.type.HandoverTypeRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -24,6 +26,7 @@ public class DBInit {
     private final VitalSignTypeRepository vitalSignTypeRepository;
     private final InjuryLocationRepository injuryLocationRepository;
     private final InjuryTypeRepository injuryTypeRepository;
+    private final HandoverTypeRepository handoverTypeRepository;
 
 
     @PostConstruct
@@ -51,6 +54,10 @@ public class DBInit {
 
         VITALS.forEach((vital, unit) -> {
             vitalSignTypeRepository.save(new VitalSignType(null, vital, unit));
+        });
+
+        HANDOVER_TYPES.forEach((type, description) -> {
+            handoverTypeRepository.save(new HandoverType(null, type, description));
         });
 
     }
@@ -133,5 +140,13 @@ public class DBInit {
             "BLOOD_GLUCOSE", "mg/dL",
             "GCS", "points",
             "HYPOTHERMIA_STAGE", "stage"
+    );
+
+    public static final Map<String, String> HANDOVER_TYPES = Map.of(
+            "HELICOPTER_EMS", "Helicopter Emergency Medical Service",
+            "PHYSICIAN_RESPONSE_VEHICLE", "Emergency physician response vehicle",
+            "AMBULANCE", "Ambulance",
+            "PRIVATE_TRANSPORT", "Private transport",
+            "DOCTOR", "Doctor"
     );
 }

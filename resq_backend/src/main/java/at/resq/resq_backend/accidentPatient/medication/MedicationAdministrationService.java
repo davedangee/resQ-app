@@ -6,6 +6,7 @@ import at.resq.resq_backend.accidentPatient.AccidentPatientRepository;
 import at.resq.resq_backend.accidentPatient.medication.dto.MedicationAdministrationRequestDto;
 import at.resq.resq_backend.accidentPatient.medication.type.Medication;
 import at.resq.resq_backend.accidentPatient.medication.type.MedicationRepository;
+import at.resq.resq_backend.exceptionHandling.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,21 +29,26 @@ public class MedicationAdministrationService {
     private final AccidentPatientRepository accidentPatientRepository;
     private final MedicationRepository medicationRepository;
 
-    public List<MedicationAdministration> getAllByPatientId(Long patientId) {
-        accidentPatientRepository.findById(patientId).orElseThrow(() -> new NoSuchElementException("Patient not found with id: " + patientId));;
-        return medicationAdministrationRepository.findAllByAccidentPatientId(patientId);
+    public List<MedicationAdministration> getAllByReportId(Long reportId) {
+        AccidentPatient accidentPatient = accidentPatientRepository.findByIncidenceReportId(reportId)
+                .orElseThrow(() -> new ResourceNotFoundException("AccidentPatient not found for incidenceReport id: " + reportId));
+
+        return medicationAdministrationRepository.findAllByAccidentPatientId(accidentPatient.getId());
     }
 
-    public MedicationAdministration getByIdAndPatientId(Long id, Long patientId) {
-        return medicationAdministrationRepository.findByIdAndAccidentPatientId(id, patientId)
-                .orElseThrow(() -> new NoSuchElementException("MedicationAdministration not found with id: " + id));
+    public MedicationAdministration getByIdAndReportId(Long id, Long reportId) {
+        AccidentPatient accidentPatient = accidentPatientRepository.findByIncidenceReportId(reportId)
+                .orElseThrow(() -> new ResourceNotFoundException("AccidentPatient not found for incidenceReport id: " + reportId));
+
+        return medicationAdministrationRepository.findByIdAndAccidentPatientId(id, accidentPatient.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("MedicationAdministration not found with id: " + id));
     }
 
-    public MedicationAdministration create(Long patientId, Long medicationId, MedicationAdministrationRequestDto dto) {
-        AccidentPatient patient = accidentPatientRepository.findById(patientId)
-                .orElseThrow(() -> new NoSuchElementException("AccidentPatient not found with id: " + patientId));
+    public MedicationAdministration create(Long reportId, Long medicationId, MedicationAdministrationRequestDto dto) {
+        AccidentPatient patient = accidentPatientRepository.findByIncidenceReportId(reportId)
+                .orElseThrow(() -> new ResourceNotFoundException("AccidentPatient not found for incidenceReport id: " + reportId));
         Medication medication = medicationRepository.findById(medicationId)
-                .orElseThrow(() -> new NoSuchElementException("Medication not found with id: " + medicationId));
+                .orElseThrow(() -> new ResourceNotFoundException("Medication not found with id: " + medicationId));
 
         MedicationAdministration administration = MedicationAdministration.builder()
                 .accidentPatient(patient)
@@ -54,12 +60,15 @@ public class MedicationAdministrationService {
         return medicationAdministrationRepository.save(administration);
     }
 
-    public MedicationAdministration update(Long id, Long patientId, MedicationAdministrationRequestDto dto) {
-        MedicationAdministration existing = medicationAdministrationRepository.findByIdAndAccidentPatientId(id, patientId)
-                .orElseThrow(() -> new NoSuchElementException("MedicationAdministration not found with id: " + id));
+    public MedicationAdministration update(Long id, Long reportId, MedicationAdministrationRequestDto dto) {
+        AccidentPatient accidentPatient = accidentPatientRepository.findByIncidenceReportId(reportId)
+                .orElseThrow(() -> new ResourceNotFoundException("AccidentPatient not found for incidenceReport id: " + reportId));
+
+        MedicationAdministration existing = medicationAdministrationRepository.findByIdAndAccidentPatientId(id, accidentPatient.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("MedicationAdministration not found with id: " + id));
 
         Medication medication = medicationRepository.findById(dto.getMedicationId())
-                .orElseThrow(() -> new NoSuchElementException("Medication not found with id: " + dto.getMedicationId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Medication not found with id: " + dto.getMedicationId()));
 
         existing.setDosage(dto.getDosage());
         existing.setTimestamp(dto.getTimestamp());
@@ -68,9 +77,12 @@ public class MedicationAdministrationService {
         return medicationAdministrationRepository.save(existing);
     }
 
-    public void delete(Long id, Long patientId) {
-        MedicationAdministration existing = medicationAdministrationRepository.findByIdAndAccidentPatientId(id, patientId)
-                .orElseThrow(() -> new NoSuchElementException("MedicationAdministration not found with id: " + id));
+    public void delete(Long id, Long reportId) {
+        AccidentPatient accidentPatient = accidentPatientRepository.findByIncidenceReportId(reportId)
+                .orElseThrow(() -> new ResourceNotFoundException("AccidentPatient not found for incidenceReport id: " + reportId));
+
+        MedicationAdministration existing = medicationAdministrationRepository.findByIdAndAccidentPatientId(id, accidentPatient.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("MedicationAdministration not found with id: " + id));
         medicationAdministrationRepository.delete(existing);
     }
 }
