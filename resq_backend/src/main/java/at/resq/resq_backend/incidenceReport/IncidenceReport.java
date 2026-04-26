@@ -3,6 +3,7 @@ package at.resq.resq_backend.incidenceReport;
 
 import at.resq.resq_backend.accidentPatient.AccidentPatient;
 import at.resq.resq_backend.incidenceReport.handover.Handover;
+import at.resq.resq_backend.rescueOperation.RescueOperation;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -61,5 +62,9 @@ public class IncidenceReport {
     @ToString.Include
     @OneToOne(mappedBy = "incidenceReport", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
     private AccidentPatient accidentPatient;
+
+    @JsonManagedReference
+    @OneToOne(mappedBy = "incidenceReport", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
+    private RescueOperation rescueOperation;
 
 }
