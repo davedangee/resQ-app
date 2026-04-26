@@ -11,6 +11,24 @@ import at.resq.resq_backend.accidentPatient.vitalSign.type.VitalSignType;
 import at.resq.resq_backend.accidentPatient.vitalSign.type.VitalSignTypeRepository;
 import at.resq.resq_backend.incidenceReport.handover.type.HandoverType;
 import at.resq.resq_backend.incidenceReport.handover.type.HandoverTypeRepository;
+import at.resq.resq_backend.rescueOperation.referenceEntities.activity.Activity;
+import at.resq.resq_backend.rescueOperation.referenceEntities.activity.ActivityRepository;
+import at.resq.resq_backend.rescueOperation.referenceEntities.alertType.AlertType;
+import at.resq.resq_backend.rescueOperation.referenceEntities.alertType.AlertTypeRepository;
+import at.resq.resq_backend.rescueOperation.referenceEntities.evacuationType.EvacuationType;
+import at.resq.resq_backend.rescueOperation.referenceEntities.evacuationType.EvacuationTypeRepository;
+import at.resq.resq_backend.rescueOperation.referenceEntities.policeRole.PoliceRole;
+import at.resq.resq_backend.rescueOperation.referenceEntities.policeRole.PoliceRoleRepository;
+import at.resq.resq_backend.rescueOperation.referenceEntities.protectiveGear.ProtectiveGear;
+import at.resq.resq_backend.rescueOperation.referenceEntities.protectiveGear.ProtectiveGearRepository;
+import at.resq.resq_backend.rescueOperation.referenceEntities.season.Season;
+import at.resq.resq_backend.rescueOperation.referenceEntities.season.SeasonRepository;
+import at.resq.resq_backend.rescueOperation.referenceEntities.slopeCondition.SlopeCondition;
+import at.resq.resq_backend.rescueOperation.referenceEntities.slopeCondition.SlopeConditionRepository;
+import at.resq.resq_backend.rescueOperation.referenceEntities.snowComposition.SnowComposition;
+import at.resq.resq_backend.rescueOperation.referenceEntities.snowComposition.SnowCompositionRepository;
+import at.resq.resq_backend.rescueOperation.referenceEntities.weather.Weather;
+import at.resq.resq_backend.rescueOperation.referenceEntities.weather.WeatherRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -27,7 +45,15 @@ public class DBInit {
     private final InjuryLocationRepository injuryLocationRepository;
     private final InjuryTypeRepository injuryTypeRepository;
     private final HandoverTypeRepository handoverTypeRepository;
-
+    private final WeatherRepository weatherRepository;
+    private final SlopeConditionRepository slopeConditionRepository;
+    private final SnowCompositionRepository snowCompositionRepository;
+    private final SeasonRepository seasonRepository;
+    private final PoliceRoleRepository policeRoleRepository;
+    private final ActivityRepository activityRepository;
+    private final EvacuationTypeRepository evacuationTypeRepository;
+    private final ProtectiveGearRepository protectiveGearRepository;
+    private final AlertTypeRepository alertTypeRepository;
 
     @PostConstruct
     public void initialize() {
@@ -40,26 +66,47 @@ public class DBInit {
                              \\/     \\/       \\__>         \\/      \\/     \\/     \\/    \\/     \\/      \\/        \s""");
         System.out.println("DBInit.initialize");
 
-        LOCATIONS.forEach(location -> {
-            injuryLocationRepository.save(new InjuryLocation(null, location));
-        });
+        if (injuryLocationRepository.count() == 0)
+            LOCATIONS.forEach(location -> injuryLocationRepository.save(new InjuryLocation(null, location)));
 
-        TYPES.forEach(type -> {
-            injuryTypeRepository.save(new InjuryType(null, type, false));
-        });
+        if (injuryTypeRepository.count() == 0)
+            TYPES.forEach(type -> injuryTypeRepository.save(new InjuryType(null, type, false)));
 
-        MEDICATIONS.forEach(medication -> {
-            medicationRepository.save(new Medication(null, medication));
-        });
+        if (medicationRepository.count() == 0)
+            MEDICATIONS.forEach(medication -> medicationRepository.save(new Medication(null, medication)));
 
-        VITALS.forEach((vital, unit) -> {
-            vitalSignTypeRepository.save(new VitalSignType(null, vital, unit));
-        });
+        if (vitalSignTypeRepository.count() == 0)
+            VITALS.forEach((vital, unit) -> vitalSignTypeRepository.save(new VitalSignType(null, vital, unit)));
 
-        HANDOVER_TYPES.forEach((type, description) -> {
-            handoverTypeRepository.save(new HandoverType(null, type, description));
-        });
+        if (handoverTypeRepository.count() == 0)
+            HANDOVER_TYPES.forEach((type, description) -> handoverTypeRepository.save(new HandoverType(null, type, description)));
 
+        if (weatherRepository.count() == 0)
+            WEATHER.forEach(label -> weatherRepository.save(new Weather(null, label)));
+
+        if (slopeConditionRepository.count() == 0)
+            SLOPE_CONDITIONS.forEach(label -> slopeConditionRepository.save(new SlopeCondition(null, label)));
+
+        if (snowCompositionRepository.count() == 0)
+            SNOW_COMPOSITIONS.forEach(label -> snowCompositionRepository.save(new SnowComposition(null, label)));
+
+        if (seasonRepository.count() == 0)
+            SEASONS.forEach(label -> seasonRepository.save(new Season(null, label)));
+
+        if (policeRoleRepository.count() == 0)
+            POLICE_ROLES.forEach(label -> policeRoleRepository.save(new PoliceRole(null, label)));
+
+        if (activityRepository.count() == 0)
+            ACTIVITIES.forEach(label -> activityRepository.save(new Activity(null, label, false)));
+
+        if (evacuationTypeRepository.count() == 0)
+            EVACUATION_TYPES.forEach(label -> evacuationTypeRepository.save(new EvacuationType(null, label, false)));
+
+        if (protectiveGearRepository.count() == 0)
+            PROTECTIVE_GEARS.forEach(label -> protectiveGearRepository.save(new ProtectiveGear(null, label, false)));
+
+        if (alertTypeRepository.count() == 0)
+            ALERT_TYPES.forEach(label -> alertTypeRepository.save(new AlertType(null, label, false)));
     }
 
     public static final List<String> LOCATIONS = List.of(
@@ -148,5 +195,68 @@ public class DBInit {
             "AMBULANCE", "Ambulance",
             "PRIVATE_TRANSPORT", "Private transport",
             "DOCTOR", "Doctor"
+    );
+
+    public static final List<String> WEATHER = List.of(
+            "SUNSHINE",
+            "SNOWFALL",
+            "CLOUDY",
+            "FOG",
+            "RAIN"
+    );
+
+    public static final List<String> SLOPE_CONDITIONS = List.of(
+            "GRIPPY",
+            "SMOOTH_HARD",
+            "SOFT",
+            "FRESH_SNOW",
+            "DEEP_SNOW",
+            "LOW_SNOW_SPOT"
+    );
+
+    public static final List<String> SNOW_COMPOSITIONS = List.of(
+            "NATURAL_SNOW",
+            "ARTIFICIAL_SNOW",
+            "MOSTLY_NATURAL_SNOW",
+            "MOSTLY_ARTIFICIAL_SNOW"
+    );
+
+    public static final List<String> SEASONS = List.of(
+            "2024/25", "2025/26", "2026/27", "2027/28", "2028/29",
+            "2029/30", "2030/31", "2031/32", "2032/33", "2033/34",
+            "2034/35", "2035/36", "2036/37", "2037/38", "2038/39",
+            "2039/40", "2040/41", "2041/42", "2042/43", "2043/44",
+            "2044/45", "2045/46", "2046/47", "2047/48", "2048/49",
+            "2049/50"
+    );
+
+    public static final List<String> POLICE_ROLES = List.of(
+            "POLICE_NOTIFIED",
+            "POLICE_PRESENT"
+    );
+
+    public static final List<String> ACTIVITIES = List.of(
+            "SKIING",
+            "SNOWBOARDING",
+            "SKI_TOURING"
+    );
+
+    public static final List<String> EVACUATION_TYPES = List.of(
+            "AKJA",
+            "SKIDOO",
+            "SKIDOO_WITH_AKJA_TRAILER",
+            "CABLE_CAR_DESCENT",
+            "SELF_DESCENT",
+            "HELICOPTER"
+    );
+
+    public static final List<String> PROTECTIVE_GEARS = List.of(
+            "HELMET",
+            "BACK_PROTECTOR"
+    );
+
+    public static final List<String> ALERT_TYPES = List.of(
+            "RADIO",
+            "PHONE"
     );
 }
